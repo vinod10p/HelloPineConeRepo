@@ -6,6 +6,12 @@
 import HelloOpenAI
 import HelloPineConeVectorDatabase
 import HelloLangchain
+import HelloLangchainAI
+import HelloRag
+import HelloLCRag
+import HelloLCPineconeRag
+import HelloLCPineconeRag1
+import PCAssistant
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -16,7 +22,7 @@ def print_hi(name):
 def  helloAI():
 
     openAI = HelloOpenAI.MyOpenAI()
-    openAI.test1()
+    ## openAI.test1()
     openAI.test2()
 
 def helloPC():
@@ -32,11 +38,48 @@ def helloLC():
     lc.helloPromptAzure()
 
 
+def helloLCAI():
+    lc = HelloLangchainAI.MyLangchain()
+    lc.test()
+    # lc.helloPrompt('whats capital of India')
+    lc.azure_prompt('whats capital of India and pakistan and new york state')
+
+def helloRag():
+    rag = HelloRag.MyRag()
+    rag.test()
+    rag.my_rag()
+
+def helloLCRag():
+    lcRag = HelloLCRag.LCRag()
+    # lcRag.test()
+    lcRag.test1()
+
+def helloLCPineconeRag():
+    lcr = HelloLCPineconeRag.Rag()
+    lcr.test1()
+
+def helloLCPineconeRag1():
+    lcr = HelloLCPineconeRag1.Rag()
+    lcr.test1()
+
+def helloAssistant():
+    pca = PCAssistant.PCAssistant()
+    pca.test()
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # print_hi('Hello PineCone')
+    print_hi('Hello PineCone')
+    # helloAssistant()
+    ## helloAI()
     # helloPC()
-    helloLC()
+    ## helloLC()
+    ## helloLCAI()
+    # helloRag()
+    # helloLCRag()
+    helloLCPineconeRag1()
+    print_hi('done')
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

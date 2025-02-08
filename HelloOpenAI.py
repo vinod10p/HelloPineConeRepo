@@ -19,18 +19,23 @@ class MyOpenAI:
 
         client = OpenAI()
         client.api_key = os.getenv("OPENAI_API_KEY")
-        completion = client.chat.completions.create(
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {
+                "role": "user",
+                "content": "Can you tell me how to call the OpenAI API for chat completion?"
+            }
+        ]
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {
-                    "role": "user",
-                    "content": "Write a haiku about recursion in programming."
-                }
-            ]
+            messages=messages,
+            temperature =0.7
         )
 
-        print(completion.choices[0].message)
+        print(response.choices[0].message)
+        print('-----')
+        print (response.choices[0].message.content)
+
 
     def test2(self):
 
@@ -42,17 +47,19 @@ class MyOpenAI:
 
         deployment_name = os.getenv('AZURE_DEPLOYMENT_NAME')
 
-        completion = client.chat.completions.create(
+        messages = [
+                       {
+                           "role": "user",
+                           # "content": "How do I output all files in a directory using Python?",
+                           "content": "tell me about east india company ",
+                       },
+                   ]
+
+        response = client.chat.completions.create(
             model= deployment_name,  # "deployment-name123",  # e.g. gpt-35-instant
-            messages=[
-                {
-                    "role": "user",
-                    # "content": "How do I output all files in a directory using Python?",
-                    "content": "write a tagline for an ice creame shop ",
-                },
-            ],
+            messages=messages,
         )
-        print(completion.to_json())
+        print(response.to_json())
 
 
 
