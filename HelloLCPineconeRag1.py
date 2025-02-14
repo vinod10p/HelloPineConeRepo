@@ -53,6 +53,66 @@ class Rag():
         print(pc.Index(index_name).describe_index_stats())
         print("\n")
 
+    def delete_index(self, index_name):
+        pc = Pinecone(api_key=self.pinecone_api_key)
+        ## need to check if index exists
+        index_list = pc.list_indexes()
+        print(index_list.names())
+
+        if index_name in index_list.names():
+            pc.delete_index(index_name)
+            print("Index deleted")
+        else:
+            print("Index does not exist")
+        return
+
+    def index_info(self, index_name):
+        pc = Pinecone(api_key=self.pinecone_api_key)
+        print(pc.Index(index_name).describe_index_stats())
+        print("\n")
+        return
+
+    def fetch_index(self, index_name):
+        pc = Pinecone(api_key=self.pinecone_api_key)
+        index = pc.Index(index_name)
+        ## vector_ids = index.list()
+        ## print(vector_ids[0], vector_ids[1])
+        print('fetching index')
+        vector_data = index.fetch(ids=["id_prefix0", "id_prefix1"], namespace="rag1")
+
+        print(vector_data)
+        print('fetched index')
+
+        return
+    def query_index(self, index_name, namespace, query_text):
+        pc = Pinecone(api_key=self.pinecone_api_key)
+        ## convert the query_text to vector using the model and then query the index
+        query_embedding = pc.inference.embed(
+            model=self.model_name,
+            inputs=[query_text],
+            parameters={"input_type": "query"}
+
+
+        )
+        print("Query embedding")
+        print(query_embedding)
+        print("\n")
+
+        # serach the index with the query_embedding for the three most similar vectors
+        search_results = pc.Index(index_name).query(
+            namespace=namespace,
+            vector=query_embedding[0].values,
+            top_k=3,
+            include_values=False,
+            include_metadata=True
+        )
+        print(search_results)
+
+
+
+
+
+
 
 
     def split_doc(self, doc):
@@ -70,7 +130,7 @@ class Rag():
         ## print(split_docs[31])
         return split_docs
 
-    def upsert_index(self, embedding, index_name, namespace, file):
+    def upsert_index1(self, embedding, index_name, namespace, file):
 
         split_docs = self.split_doc(file)
         docsearch = PineconeVectorStore.from_texts([t.page_content for t in split_docs],
@@ -78,9 +138,30 @@ class Rag():
 
         )
 
+    def upsert_index(self, embedding, index_name, namespace, file, id_prefix=""):
+        split_docs = self.split_doc(file)
+        if id_prefix == "":
+            docsearch = PineconeVectorStore.from_texts([t.page_content for t in split_docs],
+                                                       embedding, index_name=index_name, namespace=namespace)
+        else:
+            for i, t in enumerate(split_docs):
+                doc_id = f"{id_prefix}{i}"
+                docsearch = PineconeVectorStore.from_texts([t.page_content], embedding, index_name=index_name, namespace=namespace, ids=[doc_id])
+
+        print("Upserted vectors")
+        retriever = docsearch.as_retriever()
+        print(retriever)
+        print("\n")
+
         ## pc.deinit()
 
-
+    def test_query(self):
+        index_name = "rag-index7"
+        namespace = "rag1"
+        # query_text = "Dorothy lived in the midst of the great Kansas prairies," \
+        #             " with Uncle Henry, who was a farmer, and Aunt Em, who was the farmer's wife."
+        query_text = "who is Ramukaka"
+        self.query_index(index_name, namespace, query_text)
 
     def test1(self):
         index_name = "rag-index7"
@@ -89,7 +170,7 @@ class Rag():
         embedding = self.get_embedding()
         self.create_index(index_name)
 
-        self.upsert_index(embedding, index_name, 'rag1', file)
+        self.upsert_index(embedding, index_name, 'rag1', file, 'id_prefix')
 
         # See how many vectors have been upserted
         print("Index after upsert:")
