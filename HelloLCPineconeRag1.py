@@ -149,8 +149,10 @@ class Rag():
                 docsearch = PineconeVectorStore.from_texts([t.page_content], embedding, index_name=index_name, namespace=namespace, ids=[doc_id])
 
         print("Upserted vectors")
-        retriever = docsearch.as_retriever()
-        print(retriever)
+        ##retriever = docsearch.as_retriever()
+        ## print(retriever)
+        ## retrieved_docs = docsearch.similarity_search('who is ramukaka', 5)
+        ## print(retrieved_docs)
         print("\n")
 
         ## pc.deinit()
@@ -168,9 +170,10 @@ class Rag():
         file = '../pdfs/wonderful_wizard.txt'
 
         embedding = self.get_embedding()
+        self.delete_index(index_name)
         self.create_index(index_name)
 
-        self.upsert_index(embedding, index_name, 'rag1', file, 'id_prefix')
+        ## self.upsert_index(embedding, index_name, 'rag1', file, 'id_prefix')
 
         # See how many vectors have been upserted
         print("Index after upsert:")

@@ -13,6 +13,8 @@ import HelloLCPineconeRag
 import HelloLCPineconeRag1
 import PCAssistant
 import HelloChatbot
+import HelloLCPineconeRag2
+
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -63,8 +65,8 @@ def helloLCPineconeRag1():
     lcr = HelloLCPineconeRag1.Rag()
     ## delete index
     ## lcr.delete_index("rag-index7")
-    # lcr.test1()
-    ## lcr.index_info("rag-index7")
+    ## lcr.test1()
+    lcr.index_info("rag-index7")
     ## lcr.fetch_index("rag-index7")
     # lcr.test_query()
 
@@ -79,6 +81,11 @@ def helloChatbot():
     chatbot.test()
     ## chatbot.test1()
 
+def helloLCPineconeRag2():
+    lcr = HelloLCPineconeRag2.Rag()
+    lcr.test1()
+
+
 
 
 # Press the green button in the gutter to run the script.
@@ -91,8 +98,11 @@ if __name__ == '__main__':
     ## helloLCAI()
     # helloRag()
     # helloLCRag()
-    # helloLCPineconeRag1()
-    helloChatbot()
+    ## helloLCPineconeRag1()
+    ## helloChatbot()
+    helloLCPineconeRag2()
+
+
 
     print_hi('done')
 

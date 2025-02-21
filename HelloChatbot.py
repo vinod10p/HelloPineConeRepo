@@ -9,7 +9,7 @@ from langchain import hub
 from pinecone import Pinecone, ServerlessSpec
 from langchain_pinecone import PineconeEmbeddings
 from langchain_pinecone import PineconeVectorStore
-
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 class Chatbot():
@@ -29,16 +29,24 @@ class Chatbot():
             temperature=0.0
         )
 
-    def chat(self, question):
-        retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
-        # self.retriever = docsearch.as_retriever()
+
+    def get_embedding(self):
+
         embedding = PineconeEmbeddings(
             model=self.model_name,
             pinecone_api_key=self.pinecone_api_key,
             dimension=self.embedding_dimension
         )
-        vector_store = PineconeVectorStore(index="rag-index7", embedding=embedding)
+        return embedding
+
+    def chat(self, question):
+
+        # self.retriever = docsearch.as_retriever()
+        embedding = self.get_embedding()
+        vector_store = self.get_vector_store(embedding, "rag-index7", "rag1")
         retriever = vector_store.as_retriever()
+
+        retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
 
         combine_docs_chain = create_stuff_documents_chain(
             self.llm, retrieval_qa_chat_prompt
@@ -48,12 +56,53 @@ class Chatbot():
 
         response = self.llm.invoke(question)  # llm wihtout relevant context from pinecone
         print(response)
+        print('llm response with rag')
         response =  retrieval_chain.invoke({"input":question})
+        #
+        ## print(response)
+
+
         return response
+
+    def split_doc(self, doc):
+        file_data = open(doc, 'r')
+        file_content = file_data.read()
+        print(len(file_content))
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=2000,
+            chunk_overlap=0,
+            length_function=len,
+        )
+        split_docs = text_splitter.create_documents([file_content])
+        print(type(split_docs))
+        ## print(split_docs[31])
+        return split_docs
+
+    def get_vector_store(self, embedding, index_name, namespace, id_prefix=""):
+        vectorstore = PineconeVectorStore(index_name=index_name, namespace=namespace, embedding=embedding)
+        return vectorstore
+
+
+    def get_vector_store1(self, embedding, index_name, namespace, id_prefix=""):
+        index_name = "rag-index7"
+        file = '../pdfs/wonderful_wizard.txt'
+
+        split_docs = self.split_doc(file)
+
+        # docsearch = PineconeVectorStore.from_texts([t.page_content for t in split_docs],
+        #              embedding, index_name=index_name, namespace=namespace)
+
+        docsearch = PineconeVectorStore.from_texts([''],
+                                                   embedding, index_name=index_name, namespace=namespace)
+        return docsearch
+
+
 
     def test(self):
         print('Chatbot test')
-        print(self.chat('who is ramukaka?'))
+        ## self.upsert_index()
+        print(self.chat('who was wicked witch of the east? give a short answer'))
 
     def test1(self):
         print('Chatbot test1')
