@@ -14,6 +14,7 @@ import HelloLCPineconeRag1
 import PCAssistant
 import HelloChatbot
 import HelloLCPineconeRag2
+import PineConeTextAPI
 
 
 def print_hi(name):
@@ -83,7 +84,16 @@ def helloChatbot():
 
 def helloLCPineconeRag2():
     lcr = HelloLCPineconeRag2.Rag()
-    lcr.test1()
+    # lcr.test1()
+    lcr.test2()
+
+def HelloPineConeTextAPI():
+    pca = PineConeTextAPI.PineConeTextAPIClass()
+    ## pca.test()
+    pca.test1()
+
+
+
 
 
 
@@ -91,6 +101,7 @@ def helloLCPineconeRag2():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('Hello PineCone')
+    HelloPineConeTextAPI()
     # helloAssistant()
     ## helloAI()
     # helloPC()
@@ -100,7 +111,7 @@ if __name__ == '__main__':
     # helloLCRag()
     ## helloLCPineconeRag1()
     ## helloChatbot()
-    helloLCPineconeRag2()
+    # helloLCPineconeRag2()
 
 
 
